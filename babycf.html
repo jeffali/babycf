@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+<script src="http://code.jquery.com/ui/jquery-ui-latest.js"></script>
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+</head>
+<body>
+
+<!--
+////////////////////////////////////////////////////////////////
+///////////////////////             ////////////////////////////
+////////////////////////////////////////////////////////////////
+-->
+<DIV id="dlgs">
+
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="prc" class="prime">
+Process cmd:<input type="text" id="prc"></input>
+Restart class:<input type="text" id="rcl"></input>
+<button id="nxt">next</button>
+   </DIV>
+
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="cmd" class="prime">
+Command:<input type="text" id="cmd"></input>
+Arguments:<input type="text" id="arg"></input>
+<button id="nxt">next</button>
+   </DIV>
+
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="srv" class="prime">
+Service:<input type="text" id="prc"></input>
+Ensure service is : 
+<select id="stop">
+  <option name="start">started</option>
+  <option name="stop">stopped</option>
+</select>
+<button id="nxt">next</button>
+   </DIV>
+
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="pkg" class="prime">
+Package list:<input type="textarea" id="pkgs"></input>
+<button id="add">+</button>
+<button id="del">-</button>
+Method: <select id="mth">
+  <option name="apt">apt</option>
+  <option name="rpm">rpm</option>
+</select>
+Operation: <select id="op">
+  <option name="opa">add</option>
+  <option name="opu">update/add</option>
+  <option name="opv">verify</option>
+</select>
+<button id="nxt">next</button>
+   </DIV>
+
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="sto" class="prime">
+Storage path : <input type="text" id="pth"></input>
+Ensure it is : 
+<select id="um">
+  <option name="mt">mounted</option>
+  <option name="umt">unmounted</option>
+</select>
+Check size: <select id="sz">
+  <option name="n">no</option>
+  <option name="y">yes</option>
+</select>
+Size:<input type="text" id="size"></input> 
+<select id="unit">
+  <option name="p">%</option>
+  <option name="b">bytes</option>
+  <option name="k">kilos</option>
+  <option name="m">mega</option>
+</select>
+<button id="nxt">next</button>
+
+   </DIV>
+
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="fle" class="prime">
+Ensure that <select id="fd">
+  <option name="f">File(s)</option>
+  <option name="d">Director(ies)</option>
+</select>
+<input type="text" id="fn"></input>
+<select id="ac">
+  <option name="e">Exists</option>
+  <option name="d">Does not exist</option>
+  <option name="la">Has these lines added if not already there</option>
+  <option name="ld">Has these lines deleted</option>
+  <option name="lr">Has these lines replaced</option>
+  <option name="fe">Has these fields edited</option>
+  <option name="cl">Are copied from local location</option>
+  <option name="cr">Are copied from remote location</option>
+</select>
+<button id="nxt">next</button>
+
+   </DIV>
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="fadd" class="subf prime">
+Text to add : <input type="textarea" id="atxt"></input>
+<button id="nxt">next</button>
+   </DIV>
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="fdel" class="subf prime">
+Text to delete : <input type="text" id="dtxt"></input>
+<button id="nxt">next</button>
+   </DIV>
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="frep" class="subf prime">
+String to match : <input type="text" id="rstr"></input>
+Replacement string : <input type="text" id="rep"></input>
+<button id="nxt">next</button>
+   </DIV>
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="fedt" class="subf prime">
+String to match : <input type="text" id="mstr"></input>
+Field separator : <input type="text" id="sp"></input>
+Selected field  : <input type="text" id="sf"></input>
+Subfield separator : <input type="text" id="ssp"></input>
+Subfield value  : <input type="text" id="svl"></input>
+Subfield operation: <select id="op">
+  <option name="set">set</option>
+  <option name="prepend">prepend</option>
+  <option name="append">append</option>
+  <option name="delete">delete</option>
+</select>
+<button id="nxt">next</button>
+   </DIV>
+<!--////////////////////////////////////////////////////////-->
+   <DIV id="fcpr" class="subf prime">
+Server address : <input type="text" id="srv"></input>
+Path (remote)  : <input type="text" id="pth"></input>
+Depth : <select id="dp">
+  <option name="inf">infinite</option>
+  <option name="0">0</option>
+  <option name="1">1</option>
+  <option name="2">2</option>
+  <option name="3">3</option>
+  <option name="4">4</option>
+  <option name="5">5</option>
+  <option name="6">6</option>
+  <option name="7">7</option>
+  <option name="8">8</option>
+  <option name="9">9</option>
+  <option name="10">10</option>
+</select>
+Select pattern : <input type="text" id="spt"></input>
+Exclude pattern: <input type="text" id="exl"></input>
+<button id="nxt">next</button>
+   </DIV>
+
+</DIV>
+
+<!--
+////////////////////////////////////////////////////////////////
+///////////////////////             ////////////////////////////
+////////////////////////////////////////////////////////////////
+-->
+<DIV id="main">
+  <DIV id="tab">
+  New promise :
+<select id="comp">
+  <option name="iprc">Processes</option>
+  <option name="ifle">Files</option>
+  <option name="icmd">Commands</option>
+  <option name="isrv">Services</option>
+  <option name="ipkg">Packages</option>
+  <option name="isto">Storage</option>
+</select>
+<button id="nxt">next</button>
+  </DIV>
+</DIV>
+
+<!--
+/var/run is mounted and more than 5% is used
+check ssh and mysql packages are there
+ssh service is running, restart else
+if process mysql is running 
+else start command mysql
+-->
+<!--
++ cp /tmp/baby.txt.orig /tmp/baby.txt
++ file /tmp/baby.txt exists
++ insert lines
+"aaaaaaaaaaa
+c1:d:f:g:h
+dddddddddddd
+c2:d:f:g:h
+dddddddddddd
+c3:d:f:g:h
+dddddddddddd
+c4:d:f:g:h
+dddddddddddd
+dddddddddddd
+bbbbbbbbbbbb"
++ delete lines ^ddd
++ replace :g(.*): with :k\1:
++ field edit (add)
++ field edit (set)
++ field edit (del)
+-->
+
+<script>
+////////////////////////////////////////////////////////////////
+///////////////////////   COMMON    ////////////////////////////
+////////////////////////////////////////////////////////////////
+
+$( ".prime" ).hide();
+function print_additional() {
+console.info('' + "\n" +
+'bundle edit_line ajouter(t) {' + "\n" +
+' insert_lines:' + "\n" +
+'   "$(t)";' + "\n" +
+'}' + "\n" +
+'bundle edit_line virer(re) {' + "\n" +
+' delete_lines:' + "\n" +
+'   "$(re)";' + "\n" +
+'}' + "\n" +
+'bundle edit_line remplacer(t, re) {' + "\n" +
+' replace_patterns:' + "\n" +
+'   "$(t)" replace_with => remplacer2("$(re)");' + "\n" +
+'}' + "\n" +
+'body replace_with remplacer2(re) {' + "\n" +
+' replace_value => "$(re)";' + "\n" +
+'}' + "\n" +
+'bundle replace_with champs(re,fs,sf,ss,sv,so) {' + "\n" +
+' replace_patterns:' + "\n" +
+'   "$(re)" ' + "\n" +
+'     edit_field => champs2("$(fs)","$(sf)","$(ss)","$(sv)","$(so)");' + "\n" +
+'}' + "\n" +
+'body edit_field champs2(fs,sf,ss,sv,so) {' + "\n" +
+' field_separator => "$(fs)";' + "\n" +
+' select_field    => "$(sf)";' + "\n" +
+' value_separator  => "$(ss)";' + "\n" +
+' field_value     => "$(sv)";' + "\n" +
+' field_operation => "$(so)";' + "\n" +
+' extend_fields => "true";' + "\n" +
+'}' + "\n" +
+'body copy_from scopie(from,server) {' + "\n" +
+' source      => "$(from)";' + "\n" +
+' servers     => { "$(server)" };' + "\n" +
+' compare     => "digest";' + "\n" +
+' encrypt     => "true";' + "\n" +
+' verify      => "true";' + "\n" +
+'}' + "\n" +
+'body copy_from lcopie(from) {' + "\n" +
+' source      => "$(from)";' + "\n" +
+'}' + "\n" +
+'body depth_search profondeur(d) {' + "\n" +
+' depth => "$(d)";' + "\n" +
+' xdev  => "true";' + "\n" +
+'}' + "\n" +
+'body volume checkfs(free) {' + "\n" +
+' check_foreign  => "false";' + "\n" +
+' freespace      => "$(free)";' + "\n" +
+' sensible_size  => "10000";' + "\n" +
+' sensible_count => "2";' + "\n" +
+'}' + "\n" +
+'body mount unmountfs(flag) {' + "\n" +
+' unmount => "flag";' + "\n" +
+'}' + "\n");
+}
+
+var dg2 = {
+  "promises" : [
+    { 
+      p: {t:"fexist", fd:"f", f:"/tmp/a.txt", cr:"y"},
+      c: "Hr23.(Fri|Sat)",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"fadd", f:"/tmp/b.txt", txt:"aaaaaaaaa"},
+      c: "Hr23.(Fri|Sat)",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"fdel", f:"/tmp/c.txt", txt:"aaaaaaaaa"},
+      c: "Hr23.(Fri|Sat)",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"frep", f:"/tmp/e.txt", rstr:"a.*b", rep:"xxxx"},
+      c: "Hr23.(Fri|Sat)",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"fedt", f:"/tmp/f.txt", mstr:"^u", sp:":", sf:"2", ss:",", sv:"ddd", so:"set"},
+      c: "Hr23.(Fri|Sat)",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"fcpr", fd:"f", f:"/tmp/g.txt", srv:"", pth:"/tmp/h.txt", dp:"inf", spt:"", exl:""},
+      c: "Hr23.(Fri|Sat)",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"processes",c:"/bin/ls",r:"rclass"},
+      c: "ca",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"commands",c:"/bin/ls",a:"-l -tr"},
+      c: "cb",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"services",s:"ssh",p:"start"},
+      c: "",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"packages",lp:"openssh openssh-dev openssh-lib",m:"apt",o:"add"},
+      c: "cd",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    },{
+      p: {t:"storage",p:"/var/run",i:"false",s:"10",u:"p"},
+      c: "ce",
+      a: {a1:"",a2:"",a3:"",a4:""}
+    }
+  ],
+  "global" : ""
+};
+var bs=""
+for(var i=0; i<dg2.promises.length; i++) {
+   console.log(dg2.promises[i].p.t);
+   if(dg2.promises[i].p.t=="fexist") {
+     bs=bs+"fx00"+i+",";
+   } else if(dg2.promises[i].p.t=="fadd") {
+     bs=bs+"fa00"+i+",";
+   } else if(dg2.promises[i].p.t=="fdel") {
+     bs=bs+"fd00"+i+",";
+   } else if(dg2.promises[i].p.t=="frep") {
+     bs=bs+"fr00"+i+",";
+   } else if(dg2.promises[i].p.t=="fedt") {
+     bs=bs+"fe00"+i+",";
+   } else if(dg2.promises[i].p.t=="fcpr") {
+     bs=bs+"fc00"+i+",";
+   } else if(dg2.promises[i].p.t=="packages") {
+     bs=bs+"k00"+i+",";
+   } else if(dg2.promises[i].p.t=="processes") {
+     bs=bs+"p00"+i+",";
+   } else if(dg2.promises[i].p.t=="commands") {
+     bs=bs+"c00"+i+",";
+   } else if(dg2.promises[i].p.t=="services") {
+     bs=bs+"s00"+i+",";
+   } else if(dg2.promises[i].p.t=="storage") {
+     bs=bs+"g00"+i+",";
+   }
+}
+console.info("body common control {\n" +
+"  bundlesequence => {\"fx000\", \"fa001\",\"fd002\",\"fr003\",\"fc005\", \"p006\", \"c007\", \"s008\", \"k009\", \"g0010\"};\n" +
+"  inputs   => {\"/var/cfengine/inputs/libraries/cfengine_stdlib.cf\"};\n" +
+"};");
+
+print_additional();
+
+for(var i=0; i<dg2.promises.length; i++) {
+   console.log(dg2.promises[i].p.t);
+   var p=dg2.promises[i].p;;
+   if(dg2.promises[i].p.t=="fexist") {
+     console.log("fx00"+i);
+console.info("\n" +
+"bundle agent fx00"+i+" {\n"+
+"  files:\n"+
+"    \""+p.f+"\"\n"+
+"      create => \"yes\";\n"+
+"};\n");
+   } else if(dg2.promises[i].p.t=="fadd") {
+     console.log("fa00"+i);
+console.info("\n" +
+"bundle agent fa00"+i+" {\n"+
+"  files:\n"+
+"    \""+p.f+"\"\n"+
+"      create => \"yes\",\n"+
+"      edit_line => ajouter(\""+p.txt+"\");\n"+
+"};\n");
+   } else if(dg2.promises[i].p.t=="fdel") {
+     console.log("fd00"+i);
+console.info("\n" +
+"bundle agent fd00"+i+" {\n"+
+"  files:\n"+
+"    \""+p.f+"\"\n"+
+"      edit_line => virer(\""+p.txt+"\");\n"+
+"};\n");
+   } else if(dg2.promises[i].p.t=="frep") {
+     console.log("fr00"+i);
+console.info("\n" +
+"bundle agent fr00"+i+" {\n"+
+"  files:\n"+
+"    \""+p.f+"\"\n"+
+"       edit_line => remplacer(\""+p.rstr+"\", \""+p.rep+"\");\n"+
+"};\n");
+   } else if(dg2.promises[i].p.t=="fedt") {
+     console.log("fe00"+i);
+console.info("\n" +
+"bundle agent fe00"+i+" {\n"+
+"  files:\n"+
+"    \""+p.f+"\"\n"+
+"      edit_line => champs(\""+p.mstr+"\",\""+p.sp+"\",\""+p.sf+"\",\""+p.ss+"\",\""+p.sv+"\",\""+p.so+"\");\n"+
+"};\n");
+   } else if(dg2.promises[i].p.t=="fcpr") {
+     console.log("fc00"+i);
+console.info("\n" +
+"bundle agent fc00"+i+" {\n"+
+"  files:\n"+
+"    \""+p.f+"\"\n"+
+"      copy_from => scopie(\""+p.pth+"\",\""+p.srv+"\"),\n"+
+"      depth_search => profondeur(\""+p.dp+"\");\n"+
+"};\n");
+   } else if(dg2.promises[i].p.t=="packages") {
+     console.log("k00");
+console.info("\n" +
+"bundle agent k00"+i+" {\n"+             //ok
+"  vars:\n"+
+"    \"mp\" slist => {\"p1\", \"p2\", \"p3\"};\n"+
+"  packages:\n"+
+"    \"$(mp)\" package_method => apt, package_policy => \"add\";\n"+ 
+"};\n");
+   } else if(dg2.promises[i].p.t=="processes") {
+     console.log("p00");
+console.info("\n" +
+"bundle agent p00"+i+" {\n"+
+"  processes:\n"+
+"    \""+p.c+"\" restart_class => \""+p.r+"\";\n"+
+"};\n"); 
+  } else if(dg2.promises[i].p.t=="commands") {
+     console.log("c00");
+console.info("\n" +
+"bundle agent c00"+i+" {\n"+
+"  commands:\n"+
+"     \""+p.c+"\" args => \""+p.a+"\";\n"+
+"};\n");
+   } else if(dg2.promises[i].p.t=="services") {
+     console.log("s00");
+console.info("\n" +
+"bundle agent s00"+i+" {\n"+
+"  services:\n"+
+"    \""+p.s+"\" service_policy => \""+p.p+"\";\n"+
+"};\n");
+   } else if(dg2.promises[i].p.t=="storage") {
+   //it just relies on /etc/fstab
+   //mount  unmout (true/false) (opt)
+   //volume checkfs(free)       (opt)
+//body volume checkfs(free)
+//{
+//check_foreign  => "false";
+//freespace      => "$(free)";
+//sensible_size  => "10000";
+//sensible_count => "2";
+//}
+//
+//body mount unmountfs(flag)
+//{
+//unmount => "flag";
+//}
+     console.log("g00");
+console.info("\n" +
+"bundle agent g00"+i+" {\n"+
+"  storage:\n"+
+"    \""+p.p+"\" mount => unmountfs(\""+p.i+"\"), volume => checkfs(\""+p.s+p.u+"\");\n"+ //ok
+"};\n");
+   }
+}
+
+//var dg = JSON.parse(localStorage.getItem('dg'));
+//alert(dg.msgs);
+
+
+////////////////////////////////////////////////////////////////
+////////////////////////                ////////////////////////
+////////////////////////////////////////////////////////////////
+$("#mnemo").change(function() {
+ var nw=$(this).attr('value');
+ //handleRcvAcChange(nw);
+});
+////////////////////////////////////////////////////////////////
+////////////////////////                ////////////////////////
+////////////////////////////////////////////////////////////////
+$("#main #nxt").click(function() {
+ //var nw=$("#comp").val();
+ var nw2=$("#comp").find(":selected").attr('name').substring(1);
+ //alert(nw + ':' + nw2);
+ $( "#main" ).hide();
+ $( "#dlgs > div" ).removeClass("prime").addClass("second");
+ $( "#"+nw2 ).addClass("prime").removeClass("second");
+ $( ".prime" ).show();
+ $( ".second" ).hide();
+});
+
+</script>
+
+</body>
+</html>
+
+<!--
+files:
+  "/tmp/a.txt"
+     create => "true";
+  "/tmp/dir0/."
+     create => "true";
+  "/tmp/b.txt"
+     create => "true",
+     edit_line => ajouter("line to add");
+  "/tmp/b.txt"
+     edit_line => virer("^.*line to .* delete *$");
+  "/tmp/c.txt"
+     edit_line => remplacer("^.*line.*$", "replaced with this");
+  "/tmp/d.txt"
+     edit_line => champs("^u.*$",":","2",",","newval","set");
+  "/tmp/e.txt"
+     copy_from => lcopie("/tmp/src/d.txt");
+  "/tmp/f.txt"
+     copy_from => scopie("/tmp/src/f.txt","10.10.10.10");
+  "/tmp/dir1"
+     copy_from => lcopie("/tmp/src/dir1/."),
+     depth_search => profondeur("inf");
+  "/tmp/dir2"
+     copy_from => scopie("/tmp/src/dir2/.","10.10.10.10"),
+     depth_search => profondeur("inf");
+
+bundle edit_line ajouter(t) {
+ insert_lines:
+   "$(t)";
+}
+bundle edit_line virer(re) {
+ delete_lines:
+   "$(re)";
+}
+bundle edit_line remplacer(t, re) {
+ replace_patterns:
+   "$(t)" replace_with => remplacer2("$(re)");
+}
+body replace_with remplacer2(re) {
+ replace_value => "$(re)";
+}
+bundle replace_with champs(re,fs,sf,ss,sv,so) {
+ replace_patterns:
+   "$(re)" 
+     edit_field => champs2("$(fs)","$(sf)","$(ss)","$(sv)","$(so)");
+}
+body edit_field champs2(fs,sf,ss,sv,so) {
+ field_separator => "$(fs)";
+ select_field    => "$(sf)";
+ value_separator  => "$(ss)";
+ field_value     => "$(sv)";
+ field_operation => "$(so)";
+ extend_fields => "true";
+}
+body copy_from scopie(from,server) {
+ source      => "$(from)";
+ servers     => { "$(server)" };
+ compare     => "digest";
+ encrypt     => "true";
+ verify      => "true";
+}
+body copy_from lcopie(from) {
+ source      => "$(from)";
+}
+body depth_search profondeur(d) {
+ depth => "$(d)";
+ xdev  => "true";
+}
+-->
